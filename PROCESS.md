@@ -1,6 +1,6 @@
 # MoodGlow — Development Process
 
-Current review build: V13.5 (local preview; not yet the public GitHub submission)
+Final version: V13.5
 
 ## 1. Starting idea and goal
 
