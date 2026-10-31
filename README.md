@@ -1,59 +1,83 @@
-# MoodGlow — Strudel × Light technical prototype
+# MoodGlow
 
-This is the **first technical proof of concept** for SD5913 Assignment 3, not the final polished interface or a finished submission.
+*An interactive emotional soundscape*
 
-It tests one action → response → feedback loop:
+![MoodGlow desktop interface](docs/moodglow-desktop.png)
 
-1. Choose one current mood: Sad, Stressed, Tired or Okay.
-2. Choose one desired feeling: Uplifted, Calm or Refreshed.
-3. Click **Generate & Play**. JavaScript creates a constrained random four-layer Strudel pattern (melody, arpeggio, bass, rhythmic accent).
-4. The gradient aura pulses according to the same BPM sent to Strudel.
-5. Click **Regenerate** to create another variation, or **Stop** to silence and reset.
 
-The desired feeling chooses the principal music palette and colors. The current mood changes tempo, note density and some layer balance. Generated patterns loop until manually stopped.
+## Overview
 
-## Run locally
+MoodGlow is a browser-based experience that combines procedurally arranged instrumental music with flowing, animated light. It is designed for people who want a short, creative way to explore a mood and choose the kind of atmosphere they would like to experience. It is an expressive interface, not an emotion-recognition tool or a therapeutic treatment.
 
-In a fresh terminal, navigate to the folder containing this README, then run:
+The central interaction is choice → music and light response → feedback → another choice.
 
-    python3 -m http.server 8000
 
-Open http://localhost:8000 in a modern browser and click **Generate & Play**. The user click is necessary to unlock browser audio. Do not open the HTML directly with a file:// URL.
+## How to interact
 
-**Internet access is needed to load @strudel/web@1.0.3** from a pinned unpkg CDN URL. The **Preview light only** button lets you test the beat animation when Strudel is unavailable. No API key, paid service, GPU, microphone or custom audio samples are needed.
+1. Under How are you feeling?, choose Sad, Stressed, Tired, or Okay. This controls the light's shape and movement.
+2. Under How would you like to feel?, choose Uplifted, Calm, or Refreshed. This controls the musical arrangement and light color palette.
+3. Select Generate & Play to start a looping instrumental arrangement and animated light.
+4. Change the current mood while the music is playing to compare light behaviors without restarting the soundtrack. Choose Regenerate to hear a new musical variation.
+5. Select Stop to end the audio and return to the choices. Stop before changing the desired feeling; the ambient light can continue to drift while idle.
 
-## What is implemented
+Current mood affects the visuals, not the soundtrack. For example, Sad → Uplifted and Tired → Uplifted use the same musical style and color palette, but display different light motions.
 
-- Custom browser UI (desktop-first, with basic narrow-screen layout).
-- Four current mood options and three desired feelings.
-- Rule-based note-pattern variations with Strudel synth sounds.
-- Start, stop, regenerate, and state/error feedback.
-- Color palettes based on goal: warm/Uplifted, blue-violet/Calm, mint/Refreshed.
-- Central blurred glow and faint ambient background; both use the selected theme.
-- A visual pulse based on the exact numeric BPM also configured in Strudel.
-- Light-only demonstration mode for testing without a sound engine.
 
-## Limitations and honest claims
+## Sound and light design
 
-- **This is BPM-synchronised, not audio-reactive.** The visual clock starts when music is requested, so a slight audible offset may occur due to browser/audio scheduling.
-- Strudel uses procedural musical rules, not an AI text-to-music model. The user does not enter arbitrary text.
-- Sound design and volume still need real-device listening tests and iteration.
-- The CDN is an external dependency. Before final submission, add a short screen recording or another demonstrable fallback if the dependency is unavailable.
-- A finished PROCESS.md, credits review, screenshot, real user trial, and visible development history are still needed for Assignment 3.
-- MoodGlow is an exploratory soundscape, not a medical or therapeutic treatment.
 
-## Manual acceptance test
+| Input | Result |
+| --- | --- |
+| Sad | Soft, dispersed light islands that drift and overlap |
+| Stressed | Crossing, directional bands of light |
+| Tired | Vertical light columns that gradually appear, rise, and fade |
+| Okay | Balanced, orbiting, fluid light forms |
+| Uplifted | Energetic, pop arrangement; faster light flow |
+| Calm | Gentle arrangement; blue-violet palette and slower light flow |
+| Refreshed | Retro-inspired electronic-pop groove; mint-teal palette and medium light flow |
 
-- [ ] Start: audio plays and the glow pulses.
-- [ ] Variation: Regenerate changes the number and melody; old music does not continue underneath.
-- [ ] Stop: audio and animation stop; option buttons are enabled.
-- [ ] Choose Calm or Refreshed: background, glow and audio pattern change.
-- [ ] Choose Stressed versus Tired: BPM or pattern density changes.
-- [ ] Turn off the CDN: the app shows a clear audio error and light-only mode works.
-- [ ] Have a new user try the page without explaining it; record an observation and a design revision in PROCESS.md.
+Each soundtrack uses a 32-bar procedural arrangement and loops until stopped. Uplifted is scheduled using JavaScript and plays bundled WAV samples through the Web Audio API. Calm and Refreshed use Strudel (`@strudel/web@1.0.3`) for pattern playback. The animation follows calculated musical beat and accent events; it does not analyze microphone input or live audio frequencies.
 
-## Attribution
 
-- [Strudel](https://strudel.cc/), integrated using @strudel/web@1.0.3. Its [official project documentation](https://strudel.cc/technical-manual/project-start/) identifies the AGPL-3.0 license and integration obligations.
-- [MDN Web Audio autoplay guidance](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices) informed the click-to-play interaction.
-- UI and procedural pattern prototype drafted with ChatGPT assistance. The final PROCESS.md should record the student's choices, verification, changes and AI-use details.
+## How to run
+
+Requirements: Python 3, desktop browser (tested in Chrome), speakers or headphones, and internet access for the Strudel library used by Calm and Refreshed. No paid account or API key is required.
+
+1. Download or clone this repository.
+2. Open Terminal in the repository's root folder.
+3. Start a local web server:
+```bash
+python3 -m http.server 8000
+```
+
+4. Open http://localhost:8000 in Chrome.
+5. Select your feelings, then click Generate & Play. Browser audio requires a user click.
+6. Press Control + C in Terminal to stop the local server.
+
+Do not open `index.html` directly with a `file://` URL, because bundled audio is fetched from the local server.
+
+
+## Files
+
+- `index.html` — interface, controls, and About dialog.
+- `styles.css` — layout, typography, and interface styling.
+- `app.js` — selections, music generation, playback, and accent timing.
+- `glow-visual.js` — mood-specific animated light rendering.
+- `sounds/` — bundled WAV samples for Uplifted.
+- `test_logic.cjs` — JavaScript regression checks (run with `node test_logic.cjs` if Node.js is installed).
+- `PROCESS.md` — decisions, iteration, testing, and AI-use disclosure.
+
+## Known limitations
+
+- Calm and Refreshed depend on an external Strudel script; without a network connection, those soundtracks may not play. Uplifted uses bundled local samples.
+- Light synchronization is based on generated patterns and a browser animation clock. Especially for Strudel playback, the visual response may be slightly offset from audible events.
+- Music is rule-based, not generated by an AI audio model. MoodGlow does not infer how a person feels.
+- This is a desktop-first prototype; browser performance, rendering, and sample playback can vary across devices.
+- The Audio diagnostics & extra instruments section is a development/testing aid, not part of the primary interaction.
+
+## Credits and Tools
+
+- Strudel — pattern-based browser music system, integrated through `@strudel/web@1.0.3` (AGPL-3.0-or-later). See its license and integration guidance.
+- Web Audio API / Canvas API — browser features used for sample playback and animated light.
+- ChatGPT — assisted with prototype code, debugging, implementation alternatives, and test planning. I directed the design decisions, tested iterations, and evaluated the results. See `PROCESS.md` for details.
+- All WAV files in `sounds/` are project-specific synthesized samples. No commercial reference tracks are bundled in the application.

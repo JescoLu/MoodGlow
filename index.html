@@ -3,43 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodGlow — Strudel Technical Prototype</title>
+  <meta name="theme-color" content="#101722">
+  <title>MoodGlow — Immersive Living Light</title>
   <link rel="stylesheet" href="./styles.css">
   <script defer src="https://unpkg.com/@strudel/web@1.0.3"></script>
   <script defer src="./app.js"></script>
+  <script defer src="./glow-visual.js"></script>
 </head>
-<body data-theme="uplifted">
-  <main class="container">
+<body data-theme="uplifted" data-mood="sad">
+  <main class="page-shell">
     <header class="header">
-      <strong class="brand">✳ MoodGlow</strong>
-      <span class="tag">TECHNICAL PROTOTYPE · NOT FINAL UI</span>
+      <a class="brand" href="#experience" aria-label="MoodGlow, return to light">✳ <span>MoodGlow</span></a>
+      <div class="header-actions">
+        <span class="version">INTERACTIVE EMOTIONAL SOUNDSCAPE</span>
+        <button id="about-open" class="header-info" type="button" aria-haspopup="dialog" aria-controls="about-dialog">ⓘ About</button>
+      </div>
     </header>
-    <section class="intro">
-      <p class="eyebrow">INTERACTIVE EMOTIONAL SOUNDSCAPE</p>
-      <h1>Music you can feel.<br><span>Light you can see.</span></h1>
-      <p>Choose how you feel and how you would like to feel. Strudel composes a looping pattern while this glow breathes to the same tempo.</p>
-    </section>
-    <section class="visual" aria-label="Animated soundscape preview">
+
+    <section class="visual" id="experience" aria-label="Immersive animated light experience">
       <div class="glow" id="glow" aria-hidden="true">
         <div class="ambient ambient-a"></div>
         <div class="ambient ambient-b"></div>
-        <div class="orb">
-          <div class="blob blob-a"></div>
-          <div class="blob blob-b"></div>
-          <div class="blob blob-c"></div>
-        </div>
+        <div class="orb"><div class="blob blob-a"></div><div class="blob blob-b"></div><div class="blob blob-c"></div></div>
+        <canvas id="glow-canvas" aria-hidden="true"></canvas>
       </div>
       <div class="visual-overlay">
-        <span class="eyebrow">LIVE SOUNDSCAPE ENGINE</span>
+        <div class="visual-topline">
+          <span class="scene-label">✦ LIVING LIGHT <span class="scene-dot">·</span> SOUND × COLOR × MOTION</span>
+          <span class="visual-mood" id="visual-mood-label">Sad · Diffuse drift</span>
+        </div>
+        <div class="hero-center" aria-hidden="true"><span>Feel the sound.</span></div>
         <div class="visual-footer">
           <div class="now"><i id="beat-dot"></i><span id="playback-state">Ready to create</span></div>
-          <div class="metadata"><span id="bpm">— BPM</span><span id="variation">No variation yet</span></div>
+          <div class="metadata"><span id="bpm">— BPM</span><span id="variation">No variation yet</span><span id="section">32-bar arrangement</span><span id="mood-effect">Light · Diffuse drift</span></div>
+          <a class="explore-hint" href="#controls" aria-label="Scroll down to choices and playback controls">CHOOSE YOUR FEELING <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>
-    <section class="controls" aria-label="Soundscape controls">
+
+    <section class="controls" id="controls" aria-label="Soundscape controls">
+      <div class="control-title"><div><span class="control-eyebrow">MAKE IT YOURS</span><h1>Create your soundscape</h1></div><p>Current mood shapes the light. Desired feeling selects the soundtrack and colors. Press Stop to choose a different soundtrack.</p></div>
       <div class="choice-group">
-        <div class="group-heading"><h2>How are you feeling?</h2><span>01 · Current mood</span></div>
+        <div class="group-heading"><h2>How are you feeling?</h2><span>01 / LIGHT MOTION</span></div>
         <div class="choices" id="mood-options" role="group" aria-label="Current mood">
           <button class="choice selected" type="button" data-mood="sad" aria-pressed="true">Sad</button>
           <button class="choice" type="button" data-mood="stressed" aria-pressed="false">Stressed</button>
@@ -48,7 +53,7 @@
         </div>
       </div>
       <div class="choice-group">
-        <div class="group-heading"><h2>How would you like to feel?</h2><span>02 · Desired feeling</span></div>
+        <div class="group-heading"><h2>How would you like to feel?</h2><span>02 / MUSIC + COLOR</span></div>
         <div class="choices" id="goal-options" role="group" aria-label="Desired feeling">
           <button class="choice selected" type="button" data-goal="uplifted" aria-pressed="true">Uplifted</button>
           <button class="choice" type="button" data-goal="calm" aria-pressed="false">Calm</button>
@@ -59,12 +64,24 @@
         <button id="play" class="primary" type="button">▶ Generate &amp; Play</button>
         <button id="regenerate" class="secondary" type="button" disabled>↻ Regenerate</button>
         <button id="stop" class="secondary" type="button" disabled>■ Stop</button>
-        <button id="back" class="secondary" type="button">← Back to choices</button>
-        <button id="light-only" class="text-button" type="button">Preview light only</button>
       </div>
       <p class="status" id="status" role="status" aria-live="polite">Choose your settings, then click Generate &amp; Play. Browser audio requires your click.</p>
-      <p class="disclaimer">This proof of concept uses rule-based music generation and beat-timed light, not real audio analysis or AI emotion recognition.</p>
+      <details class="tools-details"><summary>Audio diagnostics &amp; extra instruments</summary><div class="diagnostic-actions"><button id="test-tone" class="secondary" type="button">♪ Test audio tone</button><button id="toggle-layers" class="secondary" type="button" aria-pressed="false">Extra layers: OFF (safe)</button></div><p>Optional diagnostics for checking sample playback. The default Uplifted arrangement uses its tested local WAV playback engine.</p></details>
     </section>
+    <footer class="page-footer"><span>MoodGlow · V13.5 review</span><button id="about-footer" type="button">About this project ↗</button></footer>
   </main>
+
+  <dialog id="about-dialog" aria-labelledby="about-title" aria-describedby="about-description">
+    <div class="dialog-inner">
+      <div class="dialog-top"><span class="control-eyebrow">BEHIND THE EXPERIENCE</span><button id="about-close" class="dialog-close" type="button" aria-label="Close project information">✕</button></div>
+      <h2 id="about-title">Music you can feel.<br><em>Light you can see.</em></h2>
+      <p id="about-description">MoodGlow is a small interactive emotional soundscape. Choose your present mood and the way you would like to feel, then listen to a procedurally arranged instrumental piece alongside a flowing light experience.</p>
+      <div class="about-rule"><strong>Current Mood</strong><span>Sad, Stressed, Tired or Okay determines the shape and movement of the light. You can change it without restarting the music.</span></div>
+      <div class="about-rule"><strong>Desired Feeling</strong><span>Uplifted, Calm or Refreshed determines the music arrangement, tempo and light color palette.</span></div>
+      <div class="about-rule"><strong>Light &amp; music</strong><span>The glow follows beat and accent events calculated from the music's original 32-bar pattern, not live microphone input or audio-frequency analysis. The beat alignment is approximate for Strudel-driven tracks.</span></div>
+      <p class="about-note">All three styles are procedurally arranged. Uplifted is sequenced with JavaScript and played using local WAV samples through Web Audio; Calm and Refreshed are played through Strudel. This is a creative experience, not an emotion detector or therapeutic treatment.</p>
+      <button id="about-done" class="primary" type="button">Back to the experience</button>
+    </div>
+  </dialog>
 </body>
 </html>
